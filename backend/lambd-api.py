@@ -5,6 +5,7 @@
 import json
 import boto3
 
+#Storing dynamoDB context and making a new Projects table to store an item
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("projects")
 

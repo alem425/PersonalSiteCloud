@@ -1,4 +1,5 @@
-
-variable "region" {
-  default = "us-east-1"
+terraform {
+  variable "region" {
+    default = "us-east-1"
+  }
 }
