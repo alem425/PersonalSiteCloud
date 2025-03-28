@@ -5,6 +5,7 @@ import { AuroraBackground } from "../components/ui/aurora-background";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Image } from "lucide-react";
+import { div } from "framer-motion/client";
 
 // Project interface that will have an id, title, link and image, taken in from our backend API and put onto the Website display.
 interface Project {
@@ -99,57 +100,79 @@ interface Project {
 //   );
 // }
 
-export default function AuroraBackgroundDemo() {
-  return (
-    <AuroraBackground>
-      <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4"
-      >
-        <div className=" text-3xl md:text-7xl font-bold dark:text-white text-center">
-          Alexander Morgan
+// export default function AuroraBackgroundDemo() {
+//   return (
+//     <AuroraBackground>
+//       <motion.div
+//         initial={{ opacity: 0.0, y: 40 }}
+//         whileInView={{ opacity: 1, y: 0 }}
+//         transition={{
+//           delay: 0.3,
+//           duration: 0.8,
+//           ease: "easeInOut",
+//         }}
+//         className="relative flex flex-col gap-4 items-center justify-center px-4"
+//       >
+//         <div className=" text-3xl md:text-7xl font-bold dark:text-white text-center">
+//           Alexander Morgan
+//         </div>
+//         <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
+//           Artificial Intelligence/Machine Learning &nbsp; Cloud Computing &nbsp;
+//           Full-Stack Development
+//         </div>
+//         {/* <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2">
+//           Debug now
+//         </button> */}
+//         <div className="flex flex-row mt-96 mb-12 mx-30 h-[22vh] justify-center items-center">
+//           <div className="h-full w-1/5 rounded-4xl bg-amber-700"></div>
+//           <p className="mx-10 text text-right w-1/2">
+//             Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
+//             quibusdam rem asperiores animi ut consequatur adipisci iste quo
+//             ullam. Accusamus magni, harum fugiat aut iusto at ad ex qui
+//             impedit?Lorem ipsum dolor sit amet consectetur adipisicing elit.
+//             Minima nihil exercitationem praesentium tenetur beatae. Tempore,
+//             veritatis dolorum mollitia beatae ea eius, voluptatem vitae
+//             dignissimos possimus quidem dolorem ab, dolor tempora. Lorem ipsum
+//             dolor sit amet consectetur adipisicing elit. Voluptate nulla aliquid
+//             obcaecati fuga odio, cum, vel dolor minus perspiciatis consequatur
+//             ullam impedit corporis culpa? Voluptatum obcaecati inventore velit
+//             provident dignissimos.
+//           </p>
+//         </div>
+//       </motion.div>
+//       <div>
+//         {" "}
+//         <div className="mb 5">
+//           <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
+//             <h1>Test</h1>
+//           </BackgroundGradient>
+//         </div>
+//         <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-zinc-900">
+//           <h1 className="text-slate-500">Test2</h1>
+//         </BackgroundGradient>
+//       </div>
+//     </AuroraBackground>
+//   );
+// }
+
+export default function Page(){
+
+  return(
+    <>
+     <div className="w-[820px] h-[700px] bg-blue-900 rounded-[100%] absolute z-1 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] blur-[90px] animate-[pulse_10s_ease-in-out_infinite] opacity-10"></div> 
+    <div className=" max-w-full max-h-full flex flex-col justify-center items-center">
+        <div className=" text-3xl md:text-7xl font-bold text-white text-center">
+            Alexander Morgan 
         </div>
-        <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
-          Artificial Intelligence/Machine Learning &nbsp; Cloud Computing &nbsp;
-          Full-Stack Development
-        </div>
-        {/* <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2">
-          Debug now
-        </button> */}
-        <div className="flex flex-row mt-96 mb-12 mx-30 h-[22vh] justify-center items-center">
-          <div className="h-full w-1/5 rounded-4xl bg-amber-700"></div>
-          <p className="mx-10 text text-right w-1/2">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit,
-            quibusdam rem asperiores animi ut consequatur adipisci iste quo
-            ullam. Accusamus magni, harum fugiat aut iusto at ad ex qui
-            impedit?Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Minima nihil exercitationem praesentium tenetur beatae. Tempore,
-            veritatis dolorum mollitia beatae ea eius, voluptatem vitae
-            dignissimos possimus quidem dolorem ab, dolor tempora. Lorem ipsum
-            dolor sit amet consectetur adipisicing elit. Voluptate nulla aliquid
-            obcaecati fuga odio, cum, vel dolor minus perspiciatis consequatur
-            ullam impedit corporis culpa? Voluptatum obcaecati inventore velit
-            provident dignissimos.
-          </p>
-        </div>
-      </motion.div>
-      <div>
-        {" "}
-        <div className="mb 5">
-          <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
+        <div className="font-extralight text-base md:text-4xl text-gray-100 py-4">         Artificial Intelligence/Machine Learning &nbsp; Cloud Computing &nbsp;          Full-Stack Development </div>
+
+      <div className="mb 5">
+           <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-white dark:bg-zinc-900">
             <h1>Test</h1>
-          </BackgroundGradient>
-        </div>
-        <BackgroundGradient className="rounded-[22px] max-w-sm p-4 sm:p-10 bg-zinc-900">
-          <h1 className="text-slate-500">Test2</h1>
-        </BackgroundGradient>
-      </div>
-    </AuroraBackground>
+           </BackgroundGradient>
+        </div>    
+    </div>
+    </>
+  
   );
 }

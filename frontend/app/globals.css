@@ -133,6 +133,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-950 text-foreground;
   }
+}
+
+.duration-max {
+  --tw-duration: 10000ms;
+  transition-duration: 10000ms;
 }
