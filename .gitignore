@@ -1,0 +1,10 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+Updates
+NameChange2
+
+# Keep main.tf
+!main.tf
