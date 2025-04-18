@@ -1,102 +1,51 @@
 terraform {
-  required_version = ">= 0.12"
 
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = ">= 3.0.0, < 4.0"
     }
   }
+  
 }
 
-provider "aws" {
-  region = "us-east-1"
+provider "azurerm" {
+  features {}
 }
 
-# 🚀 Create an S3 Bucket for Project Data
-resource "aws_s3_bucket" "portfolio_data" {
-  bucket = "my-portfolio-data"
+resource "azurerm_resource_group" "rg-Personal_Portfolio" {
+  name = "personal_portfolio_group"
+  location = "East US"
 }
 
-# 🚀 Bucket Policy to Allow Public Access to JSON File (Recommended Approach)
-resource "aws_s3_bucket_policy" "public_access" {
-  bucket = aws_s3_bucket.portfolio_data.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect    = "Allow",
-      Principal = "*",
-      Action    = "s3:GetObject",
-      Resource  = "${aws_s3_bucket.portfolio_data.arn}/*"
-    }]
-  })
+resource "azurerm_storage_account" "Personal_Portfolio_FuncAcct"{
+  name = " straccnt-Personal_Portfolio"
+  resource_group_name = azurerm_resource_group.rg-Personal_Portfolio.name
+  location = azurerm_resource_group.rg-Personal_Portfolio.location
+  account_tier = "Standard"
+  account_replication
+}
+resource "azurerm_app_service_plan" "Personal_Portfolio_SP"{
+  name = "personal_portfolio_function_service_plan"
+  resource_group_name = azurerm_resource_group.rg-Personal_Portfolio.name
+  location = azurerm_resource_group.rg-Personal_Portfolio.location
+  os_type = "Linux"
+  sku_name = "B1"
 }
 
-# 🚀 Upload JSON File to S3
-resource "aws_s3_object" "projects_json" {
-  bucket = aws_s3_bucket.portfolio_data.id
-  key    = "projects.json"
-  content = jsonencode([
-    {
-      "id" : "1",
-      "title" : "Morgstock Full Stack Application",
-      "link" : "https://github.com/user/portfolio",
-      "image" : "https://my-portfolio-data.s3.amazonaws.com/project1.png"
-    }
-  ])
-  content_type = "application/json"
+resource "azurerm_linux_function_app" "func-Personal-Portfolio"{
+  name = "Personal-Portfolio-Function-App"
+  resource_group_name = azurerm_resource_group.rg-Personal_Portfolio.name
+  location = azurerm_resource_group.rg-Personal-Portfolio.location
+
+  storage_account_name = azurerm_storage_account.Personal_Portfolio_FuncAcct.name
+  storage_account_access_key = azurerm_storage_account.Personal_Portfolio_FuncAcct.primary_access_key
+  service_plan_id = azurerm_app_service_plan.Personal_Portfolio_SP.id
+
+  site_config {}
 }
 
-# 🚀 Create IAM Role for Lambda
-resource "aws_iam_role" "lambda_exec" {
-  name = "lambda_exec_role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect    = "Allow",
-      Principal = { Service = "lambda.amazonaws.com" },
-      Action    = "sts:AssumeRole"
-    }]
-  })
-}
-
-# 🚀 Attach Policies for Lambda to Access DynamoDB & Logs
-resource "aws_iam_policy_attachment" "lambda_policy" {
-  name       = "lambda_policy_attachment"
-  roles      = [aws_iam_role.lambda_exec.name]
-  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
-}
-
-# 🚀 Create AWS Lambda Function (Python)
-resource "aws_lambda_function" "portfolio_lambda" {
-  function_name    = "portfolioLambda"
-  runtime          = "python3.9"
-  handler          = "lambda_function.lambda_handler"
-  filename         = "backend/lambda_function.zip"
-  source_code_hash = filebase64sha256("../backend/lambda_function.zip")
-  role             = aws_iam_role.lambda_exec.arn
-}
-
-# 🚀 Create API Gateway to Expose Lambda
-resource "aws_apigatewayv2_api" "portfolio_api" {
-  name          = "PortfolioAPI"
-  protocol_type = "HTTP"
-}
-
-resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id           = aws_apigatewayv2_api.portfolio_api.id
-  integration_type = "AWS_PROXY"
-  integration_uri  = aws_lambda_function.portfolio_lambda.invoke_arn
-}
-
-resource "aws_apigatewayv2_route" "get_projects" {
-  api_id    = aws_apigatewayv2_api.portfolio_api.id
-  route_key = "GET /projects"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
-}
-
-resource "aws_lambda_permission" "apigw_lambda" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.portfolio_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
+resource "azurerm_cosmosdb_account" "cosmos-Personal-Portfolio"{
+  name = "Personal_PortfolioDB"
+  location = azurerm_resource_group.rg_Personal_Portfolio
 }
