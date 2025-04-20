@@ -39,14 +39,12 @@ resource "azurerm_storage_account" "personal_portfolio_func_blob_acct" {
   account_kind             = "StorageV2"
 }
 # Azure Function App setup
-resource "azurerm_app_service_plan" "personal_portfolio_sp" {
+resource "azurerm_service_plan" "personal_portfolio_sp" {
   name                = "personal_portfolio_function_service_plan"
   resource_group_name = azurerm_resource_group.rg-personal_portfolio.name
   location            = azurerm_resource_group.rg-personal_portfolio.location
-  sku {
-    tier = "Basic"
-    size = "B1"
-  }
+  sku_name            = "Y1"
+  os_type             = "Linux"
 }
 
 resource "azurerm_linux_function_app" "func-personal-portfolio" {
@@ -56,18 +54,18 @@ resource "azurerm_linux_function_app" "func-personal-portfolio" {
 
   storage_account_name       = azurerm_storage_account.personal_portfolio_func_blob_acct.name
   storage_account_access_key = azurerm_storage_account.personal_portfolio_func_blob_acct.primary_access_key
-  service_plan_id            = azurerm_app_service_plan.personal_portfolio_sp.id
+  service_plan_id            = azurerm_service_plan.personal_portfolio_sp.id
 
   site_config {}
 }
 
 # Cosmos DB Account setup
 resource "azurerm_cosmosdb_account" "cosmos-personal-portfolio" {
-  name                         = "personal-portfolio-cosmosdb"
-  location                     = azurerm_resource_group.rg-personal_portfolio.location
-  resource_group_name          = azurerm_resource_group.rg-personal_portfolio.name
-  offer_type                   = "Standard"
-  kind                         = "GlobalDocumentDB"
+  name                          = "personal-portfolio-cosmosdb"
+  location                      = azurerm_resource_group.rg-personal_portfolio.location
+  resource_group_name           = azurerm_resource_group.rg-personal_portfolio.name
+  offer_type                    = "Standard"
+  kind                          = "GlobalDocumentDB"
   public_network_access_enabled = true
 
   consistency_policy {
@@ -77,7 +75,7 @@ resource "azurerm_cosmosdb_account" "cosmos-personal-portfolio" {
   }
 
   geo_location {
-    location = azurerm_resource_group.rg-personal_portfolio.location
+    location          = azurerm_resource_group.rg-personal_portfolio.location
     failover_priority = 0
   }
 }

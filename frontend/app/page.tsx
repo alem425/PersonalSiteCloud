@@ -5,6 +5,34 @@ import {useState, useEffect} from "react";
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeProject, setActiveProject] = useState<number | null>(null);
+  const [response, setResponse] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [buttonName, setButtonName] = useState('action');
+
+  const handleButtonPress = async () => {
+    setIsLoading(true);
+    setResponse('');
+
+    try{
+      const res = await fetch('http://localhost:7071/api/HiPost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify({buttonName: buttonName}),
+      });
+
+    const data = await res.text();
+    setResponse(data);
+    }catch(error){
+      setResponse('Failed to press button');
+      console.error('Error:',error);
+    }finally{
+      setIsLoading(false)
+    }
+    
+  } 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY >  50);
@@ -57,8 +85,8 @@ export default function Home() {
       <div className="fixed inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] opacity-50"></div> 
         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://readdy.ai/api/search-image?query=Abstract%20digital%20aurora%20borealis%20with%20subtle%20blue%20and%20purple%20waves%2C%20flowing%20ethereal%20light%20patterns%20on%20dark%20background%2C%20minimalist%20cosmic%20glow%20effect%20with%20depth%20and%20dimension%2C%20elegant%20atmospheric%20phenomenon&width=1920&height=1080&seq=5&orientation=landscape')] bg-cover bg-center opacity-10"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-blue-500 opacity-[0.03] blur-[300px] animate-[pulse_8s_ease-in-out_infinite]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-purple-500 opacity-[0.03] blur-[300px] animate-[pulse_10s_ease-in-out_infinite]" style={{ animationDelay: "6s" }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-blue-500 opacity-[0.1] blur-[150px] animate-[pulse_8s_ease-in-out_infinite]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-purple-500 opacity-[0.03] blur-[150px] animate-[pulse_10s_ease-in-out_infinite]" style={{ animationDelay: "4s" }}></div>
       </div>
 
 
@@ -82,7 +110,7 @@ export default function Home() {
               {["Projects", "About", "Contact"].map((item) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href={`/${item.toLowerCase()}`}
                   className="relative px-2 py-1 text-sm uppercase tracking-wider transition-colors hover:text-blue-400 cursor-pointer whitespace-nowrap"
                 >
                   <span>{item}</span>
@@ -122,7 +150,7 @@ export default function Home() {
               {/* Projects and Contact Me buttons */}
               <div className="flex space-x-4">
                 <a
-                  href="https://github.com/alem425"
+                  href="/adminftw"
                   className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300 cursor-pointer !rounded-button whitespace-nowrap"
                 >
                   View Projects
@@ -175,7 +203,7 @@ export default function Home() {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-500 mx-auto"></div>
             <p className="text-gray-400 mt-6 max-w-2xl mx-auto">
-              Some of my Favorites ;)
+              Some of My Favorites ;)
             </p>
           </div>
 
@@ -277,7 +305,7 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-center mb-4">
-                  Machine Learning
+                  Machine Learning/Artificial Intelligence
                 </h3>
                 <p className="text-gray-400 text-center mb-6">
                   Creating intelligent systems that learn and adapt through data
