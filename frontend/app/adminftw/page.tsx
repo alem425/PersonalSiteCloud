@@ -1,26 +1,65 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function AdminPage() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [github,setGithub] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const uploadResponse = await fetch('http://localhost:7071/api/UploadMedia', {
+        method: 'POST',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const { url } = await uploadResponse.json();
+      setImageUrl(url); // Store the blob URL
+      return url;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting form...");
-    
-    const payload = {
-      title,
-      category,
-      description,
-      imageUrl,
-    };
-    
+
     try {
-      console.log("Sending request to:", "http://localhost:7071/api/AddProject");
-      console.log("Payload:", payload);
+      // First handle file upload if there's a file selected
+      const fileInput = fileInputRef.current;
+      let mediaUrl = imageUrl;
+
+      if (fileInput?.files && fileInput.files[0]) {
+        mediaUrl = await handleFileUpload(fileInput.files[0]);
+      }
+
+      // Then create the project with the blob URL
+      const payload = {
+        title,
+        category,
+        description,
+        imageUrl: mediaUrl,
+        github,
+      };
 
       const response = await fetch("http://localhost:7071/api/AddProject", {
         method: "POST",
@@ -31,22 +70,23 @@ export default function AdminPage() {
         body: JSON.stringify(payload),
       });
 
-      console.log("Response status:", response.status);
-      const responseText = await response.text();
-      console.log("Response body:", responseText);
-
       if (response.ok) {
         alert("Project added successfully!");
+        // Reset form
         setTitle("");
         setCategory("");
         setDescription("");
         setImageUrl("");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       } else {
-        alert(`Failed to add project: ${responseText}`);
+        const responseText = await response.text();
+        throw new Error(responseText);
       }
     } catch (error) {
       console.error("Error details:", error);
-      alert(`Error adding project: ${error instanceof Error ? error.message : String(error)}`);
+      alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -96,16 +136,62 @@ export default function AdminPage() {
                 required
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">GitHub Link</label>
+              <input type="text"
+              value={github} 
+              onChange={(e)=> setGithub(e.target.value)}
+              className="w-full px-4 py-2 bg-black/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500" 
+              />
+            </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Image URL</label>
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full px-4 py-2 bg-black/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
-                required
-              />
+              <label className="block text-sm font-medium mb-2">Project Media</label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*,video/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Preview for images
+                        if (file.type.startsWith('image/')) {
+                          const reader = new FileReader();
+                          reader.onload = (e) => setImageUrl(e.target?.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 bg-black/50 border border-gray-700 rounded-lg hover:bg-black/70 transition-all duration-300"
+                    disabled={isUploading}
+                  >
+                    {isUploading ? 'Uploading...' : 'Choose File'}
+                  </button>
+                  {imageUrl && imageUrl.startsWith('data:image/') && (
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="Or paste media URL directly"
+                  className="w-full px-4 py-2 bg-black/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+              </div>
             </div>
 
             <button

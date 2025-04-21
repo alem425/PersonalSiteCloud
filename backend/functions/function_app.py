@@ -6,6 +6,8 @@ import datetime
 import json
 import logging
 import os
+from azure.storage.blob import BlobServiceClient
+import uuid
 
 app = func.FunctionApp()
 
@@ -30,7 +32,7 @@ def add_project(req: func.HttpRequest, msg: func.Out[func.QueueMessage], outputD
     try:
         req_body = req.get_json()
 
-        fields = ['title', 'category', 'description','imageUrl']
+        fields = ['title', 'category', 'description','imageUrl','github']
         for field in fields:
             if field not in req_body:
                 return func.HttpResponse(
@@ -44,6 +46,7 @@ def add_project(req: func.HttpRequest, msg: func.Out[func.QueueMessage], outputD
             "category": req_body['category'],
             "description": req_body['description'],
             "imageUrl": req_body['imageUrl'],
+            "github": req_body['github'],
             "createdAt": datetime.datetime.utcnow().isoformat()
         }
 
@@ -125,6 +128,93 @@ def delete_project(req: func.HttpRequest,
         return func.HttpResponse(
             f"Error deleting project: {str(e)}",
             status_code=500
+        )
+
+@app.function_name("Upload_Media")
+@app.route(route="UploadMedia", methods=["POST", "OPTIONS"], auth_level=func.AuthLevel.ANONYMOUS)
+def upload_media(req: func.HttpRequest) -> func.HttpResponse:
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+    
+    if req.method == "OPTIONS":
+        return func.HttpResponse(status_code=200, headers=headers)
+
+    try:
+        # Get file from request
+        file_data = req.get_body()
+        content_type = req.headers.get('Content-Type')
+        file_extension = content_type.split('/')[-1]
+        
+        # Generate unique filename
+        file_name = f"{uuid.uuid4()}.{file_extension}"
+        
+        # Initialize blob service client
+        blob_service_client = BlobServiceClient.from_connection_string(
+            os.environ["AzureWebJobsStorage"]
+        )
+        
+        # Get container client - using your existing container name
+        container_client = blob_service_client.get_container_client("portfolio-blob-storage")
+        
+        # Upload file
+        blob_client = container_client.upload_blob(
+            name=file_name,
+            data=file_data,
+            content_type=content_type,
+            overwrite=True
+        )
+        
+        # Generate URL using your storage account name
+        blob_url = f"https://{os.environ['STORAGE_ACCOUNT_NAME']}.blob.core.windows.net/portfolio-blob-storage/{file_name}"
+        
+        return func.HttpResponse(
+            json.dumps({"url": blob_url}),
+            mimetype="application/json",
+            headers=headers
+        )
+        
+    except Exception as e:
+        logging.error(f"Error uploading file: {str(e)}")
+        return func.HttpResponse(
+            str(e),
+            status_code=500,
+            headers=headers
+        )
+
+@app.function_name("Get_Projects")
+@app.route(route="GetProjects", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
+def get_projects(req: func.HttpRequest) -> func.HttpResponse:
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+
+    try:
+        # Initialize Cosmos DB client
+        client = CosmosClient.from_connection_string(os.environ["CosmosDbConnectionString"])
+        database = client.get_database_client("portfolio-db")
+        container = database.get_container_client("projects")
+
+        # Query all projects
+        query = "SELECT * FROM c"
+        items = list(container.query_items(query=query, enable_cross_partition_query=True))
+
+        return func.HttpResponse(
+            json.dumps(items),
+            mimetype="application/json",
+            headers=headers
+        )
+
+    except Exception as e:
+        logging.error(f"Error getting projects: {str(e)}")
+        return func.HttpResponse(
+            f"Error getting projects: {str(e)}",
+            status_code=500,
+            headers=headers
         )
 
 @app.route(route="HttpExample", auth_level=func.AuthLevel.ANONYMOUS)

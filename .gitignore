@@ -5,6 +5,7 @@
 .terraform.lock.hcl
 Updates
 NameChange2
+functionappchange
 
 # Keep main.tf
 !main.tf
