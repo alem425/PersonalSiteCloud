@@ -16,7 +16,7 @@ export default function AdminPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const uploadResponse = await fetch('http://localhost:7071/api/UploadMedia', {
+      const uploadResponse = await fetch('https://personal-portfolio-function-app.azurewebsites.net/api/UploadMedia', {
         method: 'POST',
         body: file,
         headers: {
@@ -61,7 +61,7 @@ export default function AdminPage() {
         github,
       };
 
-      const response = await fetch("http://localhost:7071/api/AddProject", {
+      const response = await fetch("https://personal-portfolio-function-app.azurewebsites.net/api/AddProject?", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

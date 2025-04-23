@@ -164,28 +164,6 @@ export default function Home() {
     return () => observer.disconnect();
   }, [featuredProjects.length]);
 
-  const handleButtonPress = async () => {
-    setIsLoading(true);
-    setResponse("");
-
-    try {
-      const res = await fetch("http://localhost:7071/api/HiPost", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ buttonName: buttonName }),
-      });
-
-      const data = await res.text();
-      setResponse(data);
-    } catch (error) {
-      setResponse("Failed to press button");
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   // Optimize scroll handler
   useEffect(() => {
     const handleScroll = debounce(() => {
@@ -205,7 +183,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("http://localhost:7071/api/GetProjects");
+        const response = await fetch("https://personal-portfolio-function-app.azurewebsites.net/api/GetProjects");
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
