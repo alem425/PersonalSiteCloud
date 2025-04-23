@@ -13,7 +13,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.0.0, < 4.0"
+      version = "= 3.116.0, <4.0"
     }
   }
 
@@ -56,7 +56,11 @@ resource "azurerm_linux_function_app" "func-personal-portfolio" {
   storage_account_access_key = azurerm_storage_account.personal_portfolio_func_blob_acct.primary_access_key
   service_plan_id            = azurerm_service_plan.personal_portfolio_sp.id
 
-  site_config {}
+  site_config {
+    application_stack {
+      python_version = "3.11"
+    }
+  }
 }
 
 # Cosmos DB Account setup

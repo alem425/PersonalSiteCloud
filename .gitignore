@@ -6,6 +6,7 @@
 Updates
 NameChange2
 functionappchange
-
+appstack
+appstack2
 # Keep main.tf
 !main.tf
