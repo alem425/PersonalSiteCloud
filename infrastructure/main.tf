@@ -31,7 +31,7 @@ resource "azurerm_resource_group" "rg-personal_portfolio" {
 
 # Azure Storage Account setup for Function App
 resource "azurerm_storage_account" "personal_portfolio_func_blob_acct" {
-  name                     = "straccntportfolio"
+  name                     = "straccntmysite"
   resource_group_name      = azurerm_resource_group.rg-personal_portfolio.name
   location                 = azurerm_resource_group.rg-personal_portfolio.location
   account_tier             = "Standard"
@@ -48,7 +48,7 @@ resource "azurerm_service_plan" "personal_portfolio_sp" {
 }
 
 resource "azurerm_linux_function_app" "func-personal-portfolio" {
-  name                = "personal-portfolio-function-app"
+  name                = "mysite-function-app"
   resource_group_name = azurerm_resource_group.rg-personal_portfolio.name
   location            = azurerm_resource_group.rg-personal_portfolio.location
 
@@ -65,7 +65,7 @@ resource "azurerm_linux_function_app" "func-personal-portfolio" {
 
 # Cosmos DB Account setup
 resource "azurerm_cosmosdb_account" "cosmos-personal-portfolio" {
-  name                          = "personal-portfolio-cosmosdb"
+  name                          = "portfolio-cosmosdb"
   location                      = azurerm_resource_group.rg-personal_portfolio.location
   resource_group_name           = azurerm_resource_group.rg-personal_portfolio.name
   offer_type                    = "Standard"
