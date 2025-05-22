@@ -10,3 +10,4 @@ appstack
 appstack2
 # Keep main.tf
 !main.tf
+setup

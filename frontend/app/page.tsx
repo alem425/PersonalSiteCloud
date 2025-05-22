@@ -21,6 +21,7 @@ type Project = {
   imageUrl: string;
   createdAt: string;
   github: string;
+  website: string;
 };
 
 // Top-level constant for stock images
@@ -166,6 +167,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onMouseEnter,
                   <i className="fab fa-github text-sm text-gray-300 hover:text-white transition-colors" />
                 </a>
               )}
+              {project.website && (
+                <a
+                  href={project.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log("Click detected for Website link");
+                    window.open(project.website, "_blank");
+                  }}
+                  className="relative z-10 pointer-events-auto
+                   w-8 h-8 flex items-center justify-center
+                   rounded-full bg-black/40 border border-gray-700
+                   cursor-pointer hover:bg-black/60
+                   transition-colors"
+                  role="button"
+                >
+                  <i className="fas fa-external-link-alt text-sm text-gray-300 hover:text-white transition-colors" />
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -303,7 +324,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="text-gray-300 text-lg md:text-xl mb-8 max-w-lg">
-                Computer Science, Machine Learning student at Univeristy of
+                Computer Science - Machine Learning student at Univeristy of
                 Maryland, College Park with projects specialized in{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
                   Machine Learning{" "}
@@ -315,8 +336,7 @@ export default function Home() {
                 , and{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
                   Full-Stack Development{" "}
-                </span>
-                technology and human experience.
+                </span>.
               </p>
               <div className="flex space-x-4">
                 <a
@@ -328,7 +348,7 @@ export default function Home() {
               </div>
             </div>
             <div className="md:w-1/2 mt-12 md:mt-0" ref={heroImageRef}>
-              <div className="relative">
+              <div className="relative w-2/3 mx-auto">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-30 animate-pulse"></div>
                 <div className="relative bg-black/30 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-800">
                   <img
@@ -518,11 +538,10 @@ export default function Home() {
       {/* Call to Action */}
       <section className="py-20 relative z-10">
         <div className="container mx-auto px-6">
-          <div className="relative">
+          <div className="relative" ref={callToActionRef}>
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-20"></div>
             <div
               className="relative bg-black/40 backdrop-blur-md border border-gray-800 rounded-xl p-8 md:p-12"
-              ref={callToActionRef}
             >
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <div className="md:w-2/3 mb-8 md:mb-0">

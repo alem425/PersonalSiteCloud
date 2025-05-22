@@ -7,6 +7,7 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [github,setGithub] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [website, setWebsite] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,6 +60,7 @@ export default function AdminPage() {
         description,
         imageUrl: mediaUrl,
         github,
+        website,
       };
 
       const response = await fetch("https://mysite-function-app.azurewebsites.net/api/AddProject", {
@@ -77,6 +79,7 @@ export default function AdminPage() {
         setCategory("");
         setDescription("");
         setImageUrl("");
+        setWebsite("");
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -192,6 +195,16 @@ export default function AdminPage() {
                   className="w-full px-4 py-2 bg-black/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
                 />
               </div>
+              <div>
+              <label className="block text-sm font-medium mb-2">External Link</label>
+              <input
+                type="text"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                className="w-full px-4 py-2 bg-black/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
+                required
+              />
+            </div>
             </div>
 
             <button

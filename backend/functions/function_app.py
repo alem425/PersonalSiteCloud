@@ -35,7 +35,7 @@ def add_project(req: func.HttpRequest, msg: func.Out[func.QueueMessage], outputD
     try:
         req_body = req.get_json()
 
-        fields = ['title', 'category', 'description','imageUrl','github']
+        fields = ['title', 'category', 'description','imageUrl','github', 'website']
         for field in fields:
             if field not in req_body:
                 logging.warning(f"Missing required field: {field}")
@@ -52,6 +52,7 @@ def add_project(req: func.HttpRequest, msg: func.Out[func.QueueMessage], outputD
             "description": req_body['description'],
             "imageUrl": req_body['imageUrl'],
             "github": req_body['github'],
+            "website": req_body['website'],
             "createdAt": datetime.datetime.utcnow().isoformat()
         }
 
