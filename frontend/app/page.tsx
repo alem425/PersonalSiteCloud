@@ -297,7 +297,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <a href="#" className="text-2xl font-bold tracking-tight group">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                Xander.dev
+                Xander.fyi
               </span>
               <span className="block h-0.5 max-w-0 bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-500 group-hover:max-w-full"></span>{" "}
             </a>
