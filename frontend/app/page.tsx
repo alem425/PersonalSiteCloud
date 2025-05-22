@@ -258,7 +258,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/GetProjects");
+        const response = await fetch("https://mysite-function-app.azurewebsites.net/api/GetProjects");
         if (!response.ok) {
           // Consider more specific error handling or logging
           console.error("Failed to fetch projects, status:", response.status);

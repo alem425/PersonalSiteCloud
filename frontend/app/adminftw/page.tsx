@@ -17,7 +17,7 @@ export default function AdminPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const uploadResponse = await fetch(process.env.NEXT_PUBLIC_API_URL + "/UploadMedia", {
+      const uploadResponse = await fetch('https://mysite-function-app.azurewebsites.net/api/UploadMedia', {
         method: 'POST',
         body: file,
         headers: {
@@ -63,7 +63,7 @@ export default function AdminPage() {
         website,
       };
 
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/AddProject", {
+      const response = await fetch("https://mysite-function-app.azurewebsites.net/api/AddProject", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
