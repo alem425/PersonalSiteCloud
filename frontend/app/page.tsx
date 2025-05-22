@@ -93,7 +93,7 @@ type ProjectCardProps = {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onMouseEnter, onMouseLeave, activeProjectId }) => {
   const projectCardRef = useIntersectionObserver({}, 600, 150, index);
-  const [displayImageUrl, setDisplayImageUrl] = useState<string>("");
+  const [displayImageUrl, setDisplayImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (project.imageUrl && project.imageUrl.trim() !== "") {
@@ -120,12 +120,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onMouseEnter,
       <div className="relative h-full bg-black/30 backdrop-blur-md border border-gray-800 rounded-xl overflow-hidden transition-all duration-500 group-hover:border-opacity-50">
         <div className="h-64 overflow-hidden">
           <img
-            src={displayImageUrl}
+            src={displayImageUrl || undefined}
             alt={project.title}
             className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
           />
         </div>
-        <div className="p-6">
+        <div className="p-6"> 
           <div className="flex justify-between items-start mb-3">
             <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 group-hover:text-white transition-colors duration-300">
               {project.title}
@@ -153,8 +153,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onMouseEnter,
                   rel="noopener noreferrer"
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("Click detected for GitHub link");
-                    window.open(project.github, "_blank");
+                    const urlToOpen = project.github;
+                    console.log(`GitHub link clicked. Project ID: ${project.id}, URL: '${urlToOpen}'`);
+                    if (urlToOpen && typeof urlToOpen === 'string' && urlToOpen.trim() !== "") {
+                      window.open(urlToOpen, "_blank");
+                    } else {
+                      console.error(`GitHub URL for project ${project.id} is invalid or empty: '${urlToOpen}'`);
+                    }
                   }}
                   className="relative z-10 pointer-events-auto
                    w-8 h-8 flex items-center justify-center
@@ -174,8 +179,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onMouseEnter,
                   rel="noopener noreferrer"
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("Click detected for Website link");
-                    window.open(project.website, "_blank");
+                    const urlToOpen = project.website;
+                    console.log(`Website link clicked. Project ID: ${project.id}, URL: '${urlToOpen}'`);
+                    if (urlToOpen && typeof urlToOpen === 'string' && urlToOpen.trim() !== "") {
+                      window.open(urlToOpen, "_blank");
+                    } else {
+                      console.error(`Website URL for project ${project.id} is invalid or empty: '${urlToOpen}'`);
+                    }
                   }}
                   className="relative z-10 pointer-events-auto
                    w-8 h-8 flex items-center justify-center
@@ -248,7 +258,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("https://mysite-function-app.azurewebsites.net/api/GetProjects");
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/GetProjects");
         if (!response.ok) {
           // Consider more specific error handling or logging
           console.error("Failed to fetch projects, status:", response.status);
@@ -293,7 +303,7 @@ export default function Home() {
             </a>
             <nav className="hidden md:flex space-x-8">
               {(
-                ["Projects", "About", "Contact"] as Array<keyof typeof urls>
+                ["Projects", "Contact"] as Array<keyof typeof urls>
               ).map((item) => (
                 <a
                   key={item}
