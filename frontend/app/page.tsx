@@ -277,7 +277,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#121212] text-white font-sans overflow-x-hidden overflow-y-hidden">
       {/* Background Aurora Effect */}
       <div className="fixed inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] opacity-50"></div>
